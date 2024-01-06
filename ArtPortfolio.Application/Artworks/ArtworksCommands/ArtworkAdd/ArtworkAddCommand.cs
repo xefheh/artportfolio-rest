@@ -4,7 +4,7 @@ using MongoDB.Bson;
 
 namespace ArtPortfolio.Application.Artworks.ArtworksCommands.ArtworkAdd;
 
-public class ArtworkAddCommand : IRequest<ObjectId>
+public class ArtworkAddCommand : IRequest<string>
 {
     public string Title { get; set; } = null!;
     public string Description { get; set; } = null!;

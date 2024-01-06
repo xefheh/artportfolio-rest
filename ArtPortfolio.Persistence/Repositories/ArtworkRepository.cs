@@ -1,7 +1,6 @@
 using ArtPortfolio.Domain.Entities;
 using ArtPortfolio.Persistence.Common.Exceptions;
 using ArtPortfolio.Persistence.Common.Interfaces;
-using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace ArtPortfolio.Persistence.Repositories;
@@ -10,14 +9,13 @@ public class ArtworkRepository(IArtworkContext context) : IArtworkRepository
 {
     private readonly IMongoCollection<Artwork> _collection = context.Artworks;
 
-    public async Task<Artwork> GetArtworkAsync(ObjectId id, CancellationToken cancellationToken)
+    public async Task<Artwork> GetArtworkAsync(string id, CancellationToken cancellationToken)
     {
         var artwork = await _collection
             .Find(artwork => artwork.Id == id)
             .FirstOrDefaultAsync(cancellationToken);
-
-        if (artwork == null) throw new DbNotFoundException(nameof(Artwork), id);
-
+        if (artwork == null) 
+            throw new DbNotFoundException(nameof(Artwork), id);
         return artwork;
     }
 
@@ -29,24 +27,26 @@ public class ArtworkRepository(IArtworkContext context) : IArtworkRepository
         return artworks;
     }
 
-    public async Task<int> UpdateArtworkAsync(Artwork updatedArtwork, CancellationToken cancellationToken)
+    public async Task UpdateArtworkAsync(Artwork updatedArtwork, CancellationToken cancellationToken)
     {
         var result = await _collection
-            .ReplaceOneAsync(artwork => (artwork as Artwork).Id == updatedArtwork.Id,
+            .ReplaceOneAsync(artwork => artwork.Id == updatedArtwork.Id,
                 updatedArtwork,
                 cancellationToken: cancellationToken);
-        return result.UpsertedId.AsInt32;
+        if (result.ModifiedCount == 0)
+            throw new DbNotFoundException(nameof(Artwork), updatedArtwork.Id);
     }
 
-    public async Task<int> DeleteArtworkAsync(ObjectId id, CancellationToken cancellationToken)
+    public async Task DeleteArtworkAsync(string id, CancellationToken cancellationToken)
     {
-        await _collection
-            .DeleteOneAsync(artwork => (artwork as Artwork).Id == id,
+        var result = await _collection
+            .DeleteOneAsync(artwork => artwork.Id == id,
                 cancellationToken);
-        return 0;
+        if (result.DeletedCount == 0)
+            throw new DbNotFoundException(nameof(Artwork), id);
     }
 
-    public async Task<ObjectId> AddArtworkAsync(Artwork artwork, CancellationToken cancellationToken)
+    public async Task<string> AddArtworkAsync(Artwork artwork, CancellationToken cancellationToken)
     {
         await _collection.InsertOneAsync(artwork,
             new InsertOneOptions(), cancellationToken);

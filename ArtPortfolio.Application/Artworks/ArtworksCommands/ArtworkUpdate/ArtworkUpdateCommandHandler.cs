@@ -15,7 +15,8 @@ public class ArtworkUpdateCommandHandler(IArtworkRepository repository) : IReque
             UploadDate = request.UploadDate,
             UpdateDate = DateTime.Now,
             ImageArray = request.ImageArray,
-            AnotherUrls = request.AnotherUrls
+            AnotherUrls = request.AnotherUrls,
+            Description = request.Description
         };
         
         await repository.UpdateArtworkAsync(artwork, cancellationToken);

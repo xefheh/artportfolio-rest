@@ -5,7 +5,7 @@ namespace ArtPortfolio.Application.Artworks.ArtworksCommands.ArtworkUpdate;
 
 public class ArtworkUpdateCommand : IRequest
 {
-    public ObjectId Id { get; set; }
+    public string Id { get; set; }
     public string Title { get; set; } = null!;
     public string Description { get; set; } = null!;
     public byte[] ImageArray { get; set; } = null!;

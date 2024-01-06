@@ -5,9 +5,9 @@ using MongoDB.Bson;
 
 namespace ArtPortfolio.Application.Artworks.ArtworksCommands.ArtworkAdd;
 
-public class ArtworkAddCommandHandler(IArtworkRepository repository) : IRequestHandler<ArtworkAddCommand, ObjectId>
+public class ArtworkAddCommandHandler(IArtworkRepository repository) : IRequestHandler<ArtworkAddCommand, string>
 {
-    public async Task<ObjectId> Handle(ArtworkAddCommand request, CancellationToken cancellationToken)
+    public async Task<string> Handle(ArtworkAddCommand request, CancellationToken cancellationToken)
     {
         var artwork = new Artwork()
         {

@@ -7,7 +7,6 @@ using ArtPortfolio.Application.Artworks.ArtworksQueries.ArtworkGetAll;
 using ArtPortfolio.Application.Models;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using MongoDB.Bson;
 
 namespace ArtPortfolio.API.Controllers;
 
@@ -18,15 +17,15 @@ public class ArtworkController(IMediator mediator) : BaseController(mediator)
         await Mediator.Send(new ArtworkGetAllQuery(), cancellationToken);
 
     [HttpGet("{id}")]
-    public async Task<ArtworkDetails> Get(ObjectId id, CancellationToken cancellationToken) =>
+    public async Task<ArtworkDetails> Get(string id, CancellationToken cancellationToken) =>
         await Mediator.Send(new ArtworkGetQuery() { Id = id }, cancellationToken);
 
     [HttpPost]
-    public async Task<ObjectId> Post([FromBody] ArtworkAddCommand request, CancellationToken cancellationToken) => 
+    public async Task<string> Post([FromBody] ArtworkAddCommand request, CancellationToken cancellationToken) => 
         await Mediator.Send(request, cancellationToken);
 
     [HttpDelete("{id}")]
-    public async Task Delete(ObjectId id, CancellationToken cancellationToken) =>
+    public async Task Delete(string id, CancellationToken cancellationToken) =>
         await Mediator.Send(new ArtworkDeleteCommand() { Id = id }, cancellationToken);
 
     [HttpPut]
